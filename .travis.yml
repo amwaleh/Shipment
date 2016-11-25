@@ -1,0 +1,16 @@
+language: python
+python:
+  - "3.5"
+
+before_install:
+  - "pip install -r requirements.txt"
+script:
+  - coverage run --omit="*virtualenv*","env*","limber*","app/migrations/*" manage.py test
+branches:
+  only:
+  - develop
+env:
+  global:
+    - TRAVIS_BUILD=true
+after_success:
+    - coveralls
