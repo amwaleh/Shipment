@@ -8,13 +8,17 @@ class Timemixin(models.Model):
         abstract = True
 
 class Customers(Timemixin):
-    First_name = models.CharField(max_length=32)
+    first_name = models.CharField(max_length=32)
     last_name = models.CharField(max_length=32)
-    Email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True)
     tel = models.CharField(max_length=12)
 
     def __str__(self):
-        return "{} {}".format(self.First_name, self.last_name)
+        return "{} {} |   {}\n  | tel: {} ".format(
+                                            self.first_name.capitalize(),
+                                           self.last_name.capitalize(),
+                                           self.email,
+                                           self.tel)
 
     def get_absolute_url(self):
         return reverse('courier:view_customer',kwargs={'pk':self.pk})
@@ -23,6 +27,9 @@ class Customers(Timemixin):
 class Destinations(Timemixin):
     location = models.CharField(max_length=32, unique=True)
 
+    def get_absolute_url(self):
+        return reverse('courier:detail_destination', kwargs={'pk': self.pk})
+
     def __str__(self):
         return "{}".format(self.location)
 
@@ -30,6 +37,7 @@ class Mailbag(Timemixin):
     destination = models.ForeignKey(Destinations)
     recepient = models.CharField(max_length=64)
     sender = models.ForeignKey(Customers, on_delete=models.CASCADE)
+    description = models.TextField(max_length=255,null=True, default="description")
 
     def get_absolute_url(self):
         return reverse('courier:detail_mail', kwargs={'pk':self.pk})
@@ -39,9 +47,6 @@ class Mailbag(Timemixin):
         return "Delivery to {} for {} from {} ".format(self.destination,
                                                     self.recepient,
                                                     self.sender)
-
-    def Choices(self):
-        return Destinations.objects.all()
 
 
 

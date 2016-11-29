@@ -1,40 +1,114 @@
 {% extends 'partials/base.html' %}
 {% load bootstrap3 %}
 {% block content %}
-{% if form %}
-        
-         <div class="panel panel-primary col-md-6">
-        <div class="panel-heading">
-            <h3 class="panel-title">Fill in all details</h3>
+
+    {% if form %}
+
+        <div class="panel panel-primary col-md-6">
+            <div class="panel-heading">
+                <h3 class="panel-title">Fill in all details</h3>
+            </div>
+            <div class="panel-body">
+                <form action="" method="post">
+                    {% csrf_token %} {% bootstrap_form form %}
+                    <button type="submit" value=submit class="btn btn-primary pull-right"> submit</button>
+                </form>
+            </div>
         </div>
-        <div class="panel-body">
-             <form action="" method="post">
-                {% csrf_token %} {% bootstrap_form form layout="inline" %}
-                <button type="submit" value=submit class="btn btn-primary pull-right"> submit</button>
-            </form>
+
+    {% endif %}
+
+
+
+    {% if list_mail %}
+        {% for item in list_mail %}
+            <div class="list-group col-md-4" style="margin-bottom: 1em">
+                <div class="list-group-item palette palette-belize-hole">
+                    <span class="glyphicon glyphicon-map-marker btn-lg" aria-hidden="true"></span>
+                    {{ item.destination }}
+                    <span class="date">{{ item.created|timesince }}</span>
+                </div>
+                <div class="list-group-item">posted on :{{ item.created| date }}  </div>
+                <div class="list-group-item"> sender : {{ item.sender }}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if customer_list %}
+        {% for customer in customer_list %}
+            <div class="list-group col-md-4 " style="margin-bottom: 1em">
+                <div class="list-group-item palette palette-belize-hole">
+                    <span class="glyphicon glyphicon-user btn-lg" aria-hidden="true"></span>
+                    Name : {{ customer.first_name }} {{ customer.last_name }}
+                </div>
+                <div class="list-group-item">email :{{ customer.email }}  </div>
+                <div class="list-group-item"> Tel: {{ customer.tel }}</div>
+                <div class="pull-left col-sm-10">{{ location }}</div>
+                <div class="list-group-item  ">
+                    <a href="" class=" right btn btn-danger r">delete</a>
+                    <a href="{% url 'courier:update_customer' customer.pk %}" class="btn btn-success">edit</a>
+
+                </div>
+            </div>
+        {% endfor %}
+        <div class="  col-sm-12">
+
+            <a href="{% url 'courier:customers' %}" class="btn btn-primary">add customer </a>
         </div>
-    </div>
+    {% endif %}
 
-{% endif %}
+    {% if destination_list %}
+        <div class="list-group ">
+            <div class="list-group-item active"> locations</div>
+            {% for location in destination_list %}
+                <div class="list-group-item">
 
-    {{ customer_detail }}
-{% if list_mail %}
-    {% for item in list_mail %}
-   ***. {{ item }}
+                    <div class=" col-sm-10">
+                        <span class="glyphicon glyphicon-map-marker btn-lg" aria-hidden="true"></span>
 
-    {% endfor %}
-{% endif %}
+                        <a href="{% url 'courier:update_destination' location.pk %}" class="">
+                            {{ location }}
+                        </a>
 
-    {% if detail_mail %}
-    <div class="panel panel-info col-md-6">
-        <div class="panel-heading">
-            <h3 class="panel-title">mail details</h3>
+
+                    </div>
+                    <div>
+                        <a href="" class="btn btn-danger">delete</a>
+
+                    </div>
+                </div>
+
+            {% endfor %}
+            <div class="list-group-item  text-right ">
+                <a href="{% url 'courier:destination' %}" class=" btn btn-primary">add destination </a>
+            </div>
         </div>
-        <div class="panel-body">
-             {{ detail_mail }}
+
+    {% endif %}
+
+    {% if customer_detail or  detail_mail or destination_detail %}
+        <div class="panel panel-info col-md-6">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    {% if customer_detail %}
+                        customer details
+                        <a href="{% url 'courier:mail' %}" class="btn btn-success pull-right"> send mail</a>
+                    {% endif %}
+                    {% if  detail_mail %}
+                        Mail Details
+
+                    {% endif %}
+                    {% if  destination_detail %}
+                        Destination Details
+                    {% endif %}
+                </h3>
+            </div>
+            <div class="panel-body">
+                {{ customer_detail }}
+                {{ detail_mail }}
+                {{ destination_detail }}
+            </div>
         </div>
-    </div>
-{% endif %}
-
-
+    {% endif %}
+    {% include './partials/pagnation.html' %}
 {% endblock content %}
