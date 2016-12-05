@@ -3,31 +3,44 @@
 
 <head>
     {% load staticfiles %}
-     <link rel="stylesheet" href="{% static '/assets/flat-ui/dist/css/vendor/bootstrap/css/bootstrap.min.css' %}">
-
+    <link rel="stylesheet" href="{% static '/assets/flat-ui/dist/css/vendor/bootstrap/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static '/assets/flat-ui/dist/css/flat-ui.min.css' %}">
     <script src="{% static '/assets/jquery/dist/jquery.min.js' %}"></script>
+    {#    <script src="{% static '/assets/bootstrap/dist/js/bootstrap.min.js' %}"></script>#}
     <script src="{% static '/assets/tether/dist/js/tether.min.js' %}"></script>
-    <script src="{% static '/assets/bootstrap/dist/js/bootstrap.min.js' %}"></script>
     <script src="{% static '/assets/flat-ui/dist/js/flat-ui.min.js' %}"></script>
+    <script src="{% static '/assets/jquery-ui/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'assets/packery/dist/packery.pkgd.min.js' %}"></script>
     <meta charset="UTF-8">
     <title>Document</title>
 </head>
-
 <body>
 <div class="">
-   {% include './nav.html' %}
+    {% include './nav.html' %}
 </div>
 {% include './left.html' %}
-<div class="container">
+<div class="container ">
+    <div class="grid">
+        {% block content %}
 
-    {% block content %}
-
-    {% endblock content %}
-
+        {% endblock content %}
+    </div>
+    {% include './pagnation.html' %}
 </div>
 
 {% include './footer.html' %}
 </body>
+<script>
 
+    var $grid = $('.grid').packery({
+        itemSelector: '.grid-item',
+        // columnWidth helps with drop positioning
+        columnWidth: 100
+    });
+
+    // make all items draggable
+    var $items = $grid.find('.grid-item').draggable();
+    // bind drag events to Packery
+    $grid.packery('bindUIDraggableEvents', $items);
+</script>
 </html>

@@ -3,6 +3,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic.list import ListView
 from django.views.generic import TemplateView, CreateView, DetailView, UpdateView
 from .models import Mailbag, Customers, Destinations
+from django.db.models import Q
 
 class DestinationBase(SuccessMessageMixin):
     model = Destinations
@@ -10,7 +11,7 @@ class DestinationBase(SuccessMessageMixin):
     template_name = 'index.html'
     success_message = "%(location)s was successfully committed"
 
-class Mailbag(SuccessMessageMixin):
+class MailbagBase(SuccessMessageMixin):
     model = Mailbag
     fields = "__all__"
     template_name = "index.html"
@@ -27,17 +28,17 @@ class Home (TemplateView):
     template_name = "index.html"
 
 
-class CreateMail (Mailbag,CreateView):
+class CreateMail (MailbagBase, CreateView):
     pass
 
-class DetailMail(Mailbag,DetailView):
+class DetailMail(MailbagBase, DetailView):
     context_object_name = 'detail_mail'
 
-class ListMail(Mailbag, ListView):
+class ListMail(MailbagBase, ListView):
     context_object_name = 'list_mail'
     paginate_by = 6
 
-class UpdateMail(Mailbag,UpdateView):
+class UpdateMail(MailbagBase, UpdateView):
     pass
 
 
@@ -73,3 +74,18 @@ class ListDestination(DestinationBase,ListView):
 
 class UpdateDestination(DestinationBase,UpdateView):
     pass
+
+class Search(ListMail):
+
+    def get_queryset(self):
+        term = self.request.GET.get('search')
+        queryset = Mailbag.objects.filter(
+                                          Q(sender__first_name__icontains=term) |
+                                          Q(sender__tel__icontains=term)|
+                                          Q(sender__last_name__icontains=term)|
+                                          Q(recipient__icontains=term)|
+                                          Q(description__icontains=term)|
+                                          Q(destination__location__icontains=term)|
+                                          Q(destination__location__search=term)
+                                          ).order_by('-modified')
+        return queryset

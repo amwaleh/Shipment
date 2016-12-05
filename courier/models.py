@@ -33,11 +33,24 @@ class Destinations(Timemixin):
     def __str__(self):
         return "{}".format(self.location)
 
+class State (Timemixin):
+    TRANSIT='Transit'
+    CUSTOMS = 'Customs'
+    DESTROYED = 'Destroyed'
+    Choices=[(TRANSIT, TRANSIT),
+             (CUSTOMS,CUSTOMS),
+             (DESTROYED, DESTROYED)]
+    state = models.CharField(max_length=32,choices=Choices)
+
+    def __str__(self):
+        return "{}".format(self.state)
+
 class Mailbag(Timemixin):
     destination = models.ForeignKey(Destinations)
-    recepient = models.CharField(max_length=64)
+    recipient = models.CharField(max_length=64)
     sender = models.ForeignKey(Customers, on_delete=models.CASCADE)
-    description = models.TextField(max_length=255,null=True, default="description")
+    description = models.TextField(max_length=255, null=True, default="description")
+    state = models.ForeignKey(State)
 
     def get_absolute_url(self):
         return reverse('courier:detail_mail', kwargs={'pk':self.pk})
@@ -45,8 +58,11 @@ class Mailbag(Timemixin):
 
     def __str__(self):
         return "Delivery to {} for {} from {} ".format(self.destination,
-                                                    self.recepient,
-                                                    self.sender)
+                                                       self.recipient,
+                                                       self.sender)
+
+
+
 
 
 

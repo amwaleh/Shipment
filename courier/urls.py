@@ -17,4 +17,5 @@ urlpatterns = [
     url(r'^destination/(?P<pk>[0-9]+)/$', views.DetailDestination.as_view(), name='detail_destination'),
     url(r'^listdestination/$', views.ListDestination.as_view(), name='list_destinations'),
     url(r'^updatedestination/(?P<pk>[0-9]+)/$', views.UpdateDestination.as_view(), name='update_destination'),
+    url(r'^search/$', views.Search.as_view(), name='search'),
 ]
