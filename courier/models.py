@@ -40,7 +40,7 @@ class State (Timemixin):
     Choices=[(TRANSIT, TRANSIT),
              (CUSTOMS,CUSTOMS),
              (DESTROYED, DESTROYED)]
-    state = models.CharField(max_length=32,choices=Choices)
+    state = models.CharField(max_length=32,choices=Choices, unique=True)
 
     def __str__(self):
         return "{}".format(self.state)
