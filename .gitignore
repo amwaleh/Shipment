@@ -221,3 +221,4 @@ courier/migrations/
 node_modules/
 staticfiles/
 templates/
+static/assets/
